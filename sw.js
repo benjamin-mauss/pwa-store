@@ -28,6 +28,7 @@ const filesToCache = [
     "/pages/produtos/novo/",
     "/pages/produtos/novo/index.html",
     "/pages/produtos/editar/index.html",
+    "/pages/produtos/editar/",
     // "/css",
     "/css/novo.css",
     "/css/index.css",

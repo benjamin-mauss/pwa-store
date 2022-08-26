@@ -89,9 +89,7 @@
         
         function load_produto(){
             // get id from url
-            var url_string = window.location.href;
-            var url = new URL(url_string);
-            id = parseInt(url.hash.replaceAll("#",""));
+            id = parseInt(location.hash.replaceAll("#",""));
 
             // open the database and get the product
             var request = window.indexedDB.open(main_db, version);
