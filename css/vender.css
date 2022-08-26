@@ -147,8 +147,9 @@ body {
     display: flex;
     align-items: center;
     direction: rtl;
-    overflow-x: hidden;
-    z-index:99;
+    overflow: hidden;
+    z-index:2;
+    
 }
 
 .historico_venda{
@@ -165,4 +166,8 @@ body {
 }
 body{
     margin-bottom: 50px;
+}
+.rs{
+    font-size: small;
+    color: blue;
 }
