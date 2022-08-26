@@ -2,6 +2,16 @@ const main_db = "main_db";
 const produtos_tb = "produtos";
 const vendas_tb = "vendas";
 const version = 3;
+
+
+window.addEventListener("load", () => {
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js");
+    }
+});
+
+
+
 function createDB(event){
     console.log("createDB");
     var db = event.target.result;
