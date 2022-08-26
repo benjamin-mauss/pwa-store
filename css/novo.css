@@ -1,0 +1,13 @@
+#prev_img{
+    width: 100px;
+    height: 100px;
+    
+}
+
+img {
+    pointer-events: initial;
+    -webkit-user-drag: initial;
+    -khtml-user-drag:initial;
+    -moz-user-drag:initial;
+    -o-user-drag: initial;
+}

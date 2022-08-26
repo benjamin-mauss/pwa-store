@@ -1,0 +1,17 @@
+
+body {
+    background-color: #8FCFE7;
+    overscroll-behavior: contain;
+}
+@font-face {
+    font-family: "FontAwesome";
+    src: url("/fonts/BebasNeue-Regular.ttf") format("truetype");
+}
+
+img:not(.clickable) {
+    pointer-events: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+}

@@ -1,0 +1,43 @@
+body {
+    /*overscroll-behavior-y: contain;*/
+    background-color: #8FCFE7;
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: lighter;
+    
+}
+
+.escolhas{
+    text-align: center;
+    /* border: 1px solid black; */
+    display: inline-flex;
+    justify-content: center;
+    position: absolute;
+    top: calc(50% - (66px));
+    left: calc(50% - (196px));
+}
+
+
+.escolha{
+    margin: 10px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
+    display: inline-block;
+    background-color: white;
+    height: 90px;
+    width: 90px;
+    border-radius: 20%;
+
+}
+
+.escolha img{
+    height: 80px;
+    width: 80px;
+    border-radius: 20%;
+    margin: auto auto auto auto;
+    display: block;
+}
+
+/* removes all the effects of a tag */
+a {
+    text-decoration: none;
+    color: black;
+}

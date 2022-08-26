@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/mandatory.css">
+    <link rel="stylesheet" href="/css/historico.css">
+    <script src="/js/libraries/jquery.min.js"></script>
+    <script src="/js/mandatory.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="foo1"><H3>Início</H3><input type="datetime-local" id="date_start"></div>
+    <div class="foo2"><H3>Fim</H3><input type="datetime-local" id="date_end"></div>
+    <script>
+        
+        document.getElementById("date_start").value = new Date().toISOString().substring(0,11) + "00:00"
+        document.getElementById("date_end").value = new Date().toISOString().substring(0,11) + "23:59"
+        
+    </script>
+    <!-- ao clickar no botão pesquisar, 
+    gera uma table com as vendas feitas no
+    periodo entre date_start e date_end -->
+    
+    <table id="vendas">
+        <tr>
+            <th>Data</th>
+            <th>Total</th>
+        </tr>
+        <!-- contains the last 5 sells -->
+    </div>
+    <script>
+        var total_periodo = 0
+
+        function load_vendas(){
+            total_periodo = 0
+            var start = new Date(document.getElementById("date_start").value)
+            
+            var end = new Date(document.getElementById("date_end").value)
+            document.getElementById("vendas").innerHTML = `
+            <tr>
+                <th>Data</th>
+                <th>Produto</th>
+                <th>Total</th>
+            </tr>`
+            var db = indexedDB.open(main_db, version);
+            db.onupgradeneeded = createDB;
+            db.onsuccess = (e) => {
+                var request = db.result.transaction(vendas_tb, "readonly")
+                    .objectStore(vendas_tb)
+                    .openCursor(null, 'prev');
+                request.onsuccess = (e) => {
+                    var cursor = request.result;
+                    
+                    if(cursor){
+                        now = new Date(cursor.value.date)
+                        // check if the cursor.value.date is between date_start and date_end
+                        if(now >= start && now <= end){
+                            // for each sell in current_sell
+                            cursor.value.current_sell.forEach(sell => { // opening each sell
+                                // add the sell.price to total_periodo
+                                total_periodo += sell.price*sell.quantity
+
+                                var tr = document.createElement("tr");
+
+                                var td = document.createElement("td");
+                                td.innerText = cursor.value.date.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                                tr.appendChild(td);
+                                
+                                td = document.createElement("td");
+                                td.innerText = sell.name;
+                                tr.appendChild(td);
+
+                                td = document.createElement("td");
+                                td.innerText = "R$" + sell.price*sell.quantity;
+                                tr.appendChild(td);
+
+                                document.getElementById("vendas").appendChild(tr);
+
+
+                            })
+                            
+                        }
+
+
+                        
+                        cursor.continue();
+                        
+                    }
+                    document.getElementById("total_periodo_id").innerText = total_periodo.toFixed(2)
+
+                }
+                
+            }
+        }
+
+        // make a voltar function that returns to the previous page -->
+        function voltar(){
+            window.location.href = "/";
+        }
+    </script>
+    <!-- make button voltar -->
+    <br>
+    <button onclick="voltar()">Voltar</button>
+    <button onclick="load_vendas()">Pesquisar</button>
+    <br>
+    <h3>
+        Total do período: R$<span id="total_periodo_id">0</span>
+    </h3>
+    <br>
+</body>
+</html>

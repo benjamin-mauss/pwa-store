@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+		<link rel="manifest" href="/app.webmanifest" />
+		<link rel="stylesheet" href="/css/index.css" />
+		<link rel="stylesheet" href="/css/mandatory.css" />
+		<title>Document</title>
+	</head>
+	<body>
+		<div class="escolhas">
+			<div class="escolha">
+				<a href="/pages/vendas/index.html"> <img src="/imgs/handshake.png" alt="vender" />Vender </a>
+			</div>
+			<div class="escolha">
+				<a href="/pages/produtos/index.html"> <img src="/imgs/carrinho.png" alt="produtos" />Produtos </a>
+			</div>
+			<div class="escolha">
+				<a href="/pages/historico/index.html"> <img src="/imgs/grafico.png" alt="graficos" />Histórico </a>
+			</div>
+		</div>
+		<script src="/js/libraries/jquery.min.js"></script>
+		<script src="/js/index.js?v=2"></script>
+		<script src="/js/mandatory.js"></script>
+		<script>
+			(()=>{
+				document.getElementsByTagName('img')[0].setAttribute('draggable', false);
+				if (!('indexedDB' in window)) {
+					console.log("This browser doesn't support IndexedDB");
+					return;
+				}
+				var db = indexedDB.open(main_db, version);
+				db.onupgradeneeded = createDB;
+			})()
+
+		</script>
+	</body>
+</html>

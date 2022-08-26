@@ -1,0 +1,16 @@
+{
+    "name": "Bar-IFSUL",
+    "short_name":"Bar",
+    "icons":[
+        {
+            "src":"/icon/512x512.png",
+            "type":"image/png",
+            "sizes":"512x512"
+        }
+        ],
+    "orientation":"landscape",
+    "start_url":"/",
+    "display":"fullscreen",
+    "theme_color":"red",
+    "background_color":"blue"
+}

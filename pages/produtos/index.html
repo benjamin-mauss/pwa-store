@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/mandatory.css" />
+    <title>Document</title>
+</head>
+<body>
+    <!-- Basicamente aqui vamos listar todos os produtos 
+    que estão na indexedDB e ter um botão pra deletar cada
+    um deles. Ao clickar no produto, vamos para e tela de
+    editar, passando o id por GET -->
+
+    <h1>Lista de Produtos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Imagem</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="produtos">
+    
+        </tbody>
+    </table>
+    <script src="/js/libraries/jquery.min.js"></script>
+    <script src="/js/mandatory.js"></script>
+
+    <script>
+        
+    
+        function deletar(id){
+            if(confirm("Deseja deletar este produto?")){
+                var db = indexedDB.open(main_db, version);
+                db.onsuccess = (e) => {
+                    var request = db.result.transaction(produtos_tb, "readwrite")
+                        .objectStore(produtos_tb)
+                        .delete(id);
+                    request.onsuccess = (e) => {
+                        location.reload();
+                    }
+                }
+            }
+        }
+    
+        function load_produtos(){
+            var db = indexedDB.open(main_db, version);
+            db.onupgradeneeded = createDB;
+            db.onsuccess = (e) => {
+                var request = db.result.transaction(produtos_tb, "readonly")
+                    .objectStore(produtos_tb)
+                    .getAll();
+                request.onsuccess = (e) => {
+                    var produtos = request.result;
+                    var lista = ""
+                    for (var i = 0; i < produtos.length; i++) {
+                        lista += "<tr>";
+                        lista += "<td>" + produtos[i].nome + "</td>";
+                        lista += "<td>" + produtos[i].preco + "</td>";
+                        lista += "<td><img src='" + produtos[i].imagem + "' alt='' width='50px'></td>";
+                        lista += "<td><button onclick='deletar(" + produtos[i].id + ")'>Deletar</button><button onclick='editar(" + produtos[i].id + ")'>Editar</button></td>";
+                        lista += "</tr>";
+                    }
+                    document.getElementById("produtos").innerHTML = lista;
+                }
+            }
+        }
+        
+        
+        function editar(id){
+            location.href = "/pages/produtos/editar/?id=" + id;
+        }
+
+        function voltar(){
+            location.href = "/";
+        }
+
+        function novo(){
+            location.href = "/pages/produtos/novo";
+        }
+        load_produtos();
+    </script>
+    <!-- faça os botões de voltar e novo com posições absolutas
+        no canto inferior direito -->
+    <button onclick="voltar()" id="voltar">Voltar</button>
+    <button onclick="novo()" id="novo">Novo</button>
+
+</body>
+</html>

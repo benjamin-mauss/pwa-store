@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/novo.css">
+    <link rel="stylesheet" href="/css/mandatory.css" />
+    <title>Document</title>
+</head>
+<body>
+    <h1>Novo Produto</h1>
+    <input type="file" id="imagem" hidden> <br> <br>
+    <img src="/imgs/no-image.png" alt="" id="prev_img" class="clickable"> <br>
+    <input type="text" id="nome" placeholder="Nome do produto" > <br> <br>
+    <input type="number" id="preco" placeholder="Preço do produto"  > <br> <br>
+    <button onclick="cadastrar()">Cadastrar</button>
+    <button onclick="voltar()">Voltar</button>
+    <script src="/js/libraries/jquery.min.js"></script>
+    <script src="/js/mandatory.js"></script>
+    
+    <script>
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(file);
+              reader.onload = () => {
+                let encoded = reader.result.toString().replace(/^data:(.*,)?/, '');
+                if ((encoded.length % 4) > 0) {
+                  encoded += '='.repeat(4 - (encoded.length % 4));
+                }
+                resolve(encoded);
+              };
+              reader.onerror = error => reject(error);
+            });
+          }
+        
+        
+        document.getElementById("prev_img").onclick = function() {
+            document.getElementById("imagem").click();
+        }
+
+
+        document.getElementById("imagem").addEventListener("change", (e) => {    
+            getBase64(e.target.files[0]).then(
+                data => document.getElementById("prev_img").src = 'data:text/plain;base64,' + data
+            );
+        }, false);
+
+
+        function cadastrar(){
+            // saves the product to the IndexedDB
+            var produto = {
+                nome: document.getElementById("nome").value,
+                preco: parseFloat(document.getElementById("preco").value),
+                imagem: document.getElementById("prev_img").src
+            }
+
+            
+            // open the database
+            var request = window.indexedDB.open(main_db, version);
+
+            // in case of the browser not supporting IndexedDB
+            request.onerror = function(error) {
+                console.log("error: " + error);
+            };
+            // in case of update/creation of the database
+            request.onupgradeneeded = createDB
+            // in case of success, we add the product to the database
+            request.onsuccess = function(event) {
+                var db = event.target.result;
+                var transaction = db.transaction([produtos_tb], "readwrite");
+                var objectStore = transaction.objectStore(produtos_tb);
+                var request = objectStore.add(produto);
+                request.onsuccess = function(event) {
+                    console.log("Produto cadastrado com sucesso!");
+                    location.href = "/pages/produtos";
+                };
+                transaction.oncomplete = function(event) {
+                    db.close();
+                };
+            }
+            
+        }
+
+        function voltar(){
+            window.location.href = "/pages/produtos";
+        }
+    </script>
+
+</body>
+</html>

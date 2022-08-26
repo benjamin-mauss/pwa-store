@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/mandatory.css">
+    <link rel="stylesheet" href="/css/vender.css">
+    <script src="/js/libraries/jquery.min.js"></script>
+    <script src="/js/mandatory.js"></script>
+    <title>Document</title>
+</head>
+<body>
+
+    <!-- <h1>Vender produtos</h1> -->
+    <div id="vendas">
+        <!-- contains the last 5 sells -->
+
+    </div>
+    <div id="produtos"></div>
+
+    <button id="venda" onclick="vender()">Vender</button>
+    <button id="volta" onclick="voltar()">Voltar</button>
+    <p id="total">R$ 0,00</p>
+    <script>
+        var produtos = [];
+        var current_sell = [];
+
+        // updates the products list
+        function load_produtos(){
+            var db = indexedDB.open(main_db, version);
+            db.onupgradeneeded = createDB;
+            db.onsuccess = (e) => {
+                var request = db.result.transaction(produtos_tb, "readonly")
+                    .objectStore(produtos_tb)
+                    .getAll();
+                request.onsuccess = (e) => {
+                    produtos = request.result;
+                    
+                    // add quantity to the products list
+                    for(var i = 0; i < produtos.length; i++){
+                        produtos[i].quantity = 0;
+                    }
+                    
+                    reset_current_sell()
+
+                    make_grid()
+
+                    for (let ar of document.getElementsByClassName("arrow_up") ) {
+                        ar.onclick = click_up
+                    }  
+                    for (let ar of document.getElementsByClassName("arrow_down") ) {
+                        ar.onclick = click_down
+                    }
+                }
+            }
+        }
+
+        // copys product to current_sell
+        function reset_current_sell(){
+            current_sell = [];
+            // set the quantity of every product to 0
+            console.log(produtos)
+            for( let i=0; i < produtos.length; i++){
+                current_sell.push({
+                    id: produtos[i].id,
+                    name: produtos[i].nome,
+                    price: produtos[i].preco,
+                    quantity: 0
+                })
+            }
+        }
+
+        function load_vendas(){
+            var db = indexedDB.open(main_db, version);
+            db.onupgradeneeded = createDB;
+            db.onsuccess = (e) => {
+                var request = db.result.transaction(vendas_tb, "readonly")
+                    .objectStore(vendas_tb)
+                    .getAll();
+                request.onsuccess = (e) => {
+                    var vendas = request.result
+                    vendas = vendas.reverse().slice(0,20)
+                    
+                    html = "";
+                    for(var i = 0; i < vendas.length; i++){
+                        var venda = vendas[i];
+                        var venda_html = "<p class='historico_venda'>R$" + venda.total + "</p>";
+                        html += venda_html;
+                    }
+                    document.getElementById("vendas").innerHTML = html;
+                    
+                    
+                }
+            }
+        }
+
+        // generates a grid of products in the screen
+        function make_grid(){
+            var grid = "";
+            
+            for (var i = 0; i < produtos.length; i++) {
+                
+                grid += `
+                    <div class="produto">
+                        
+                        <img src="/imgs/arrow_up.png" class="arrow_up clickable">
+                        <div class="area_branca">
+                            <img src="${produtos[i].imagem}" alt="">
+                            <h3>${produtos[i].nome}</h3>
+                            <input type="hidden" name="id" value="${produtos[i].id}" >
+                        </div>
+                        <img src="/imgs/arrow_down.png" class="arrow_down clickable">
+                        <p class="preco">R$ ${produtos[i].preco}</p>
+                        <p class="quantity">x 0</p>
+                        
+                    </div>
+                `;
+            }
+            $("#produtos").html(grid);
+        }
+            
+        function click_up(e){
+            console.log("clicked up")
+            var id = e.target.parentElement.getElementsByTagName("input")[0].value;
+            index_current_product = current_sell.findIndex(product => product.id == id)
+            
+            // adding one to quantity
+            current_sell[index_current_product]["quantity"]++
+
+            // updating the quantity in the dom
+            e.target.parentElement.getElementsByClassName("quantity")[0].innerText = "x " + current_sell[index_current_product]["quantity"]
+
+            // setting arrow down to display absolute
+            e.target.parentElement.getElementsByClassName("arrow_down")[0].style.display = "block"
+            update_current_price()
+        }
+
+        function click_down(e){
+            console.log("clicked down")
+            var id = e.target.parentElement.getElementsByTagName("input")[0].value;
+            index_current_product = current_sell.findIndex(product => product.id == id)
+            
+            // removing one to quantity
+            current_sell[index_current_product]["quantity"]--
+
+            // updating the quantity in the dom
+            e.target.parentElement.getElementsByClassName("quantity")[0].innerText = "x " + current_sell[index_current_product]["quantity"]
+
+            // setting arrow down to display none if quantity is 0
+            if(current_sell[index_current_product]["quantity"] == 0){
+                e.target.parentElement.getElementsByClassName("arrow_down")[0].style.display = "none"
+            }
+            update_current_price()
+        }
+        
+        function vender(){
+            // only sell if there is something to sell :p
+            total = update_current_price()
+            if(!total){
+                return
+            }
+            // removes the itens that doesn't have quantity from current_sell
+            current_sell = current_sell.filter(product => product.quantity > 0)
+            // deletes 
+            var db = indexedDB.open(main_db, version);
+            db.onupgradeneeded = createDB;
+            db.onsuccess = (e) => {
+                var request = db.result.transaction(vendas_tb, "readwrite")
+                    .objectStore(vendas_tb)
+                    .add({current_sell, total, date: new Date()});
+                request.onsuccess = (e) => {
+                    load_produtos()
+                    load_vendas()
+                    document.getElementById("total").innerText = "R$ 0,00"
+                    console.log("vendido")
+                }
+            }
+        }
+        
+        function voltar(){
+            location.href = "/";
+        }
+
+        function update_current_price(){
+            var total = 0;
+            for(let product of current_sell){
+                if(product.price){
+                    total += product.price * product.quantity
+                }
+            }
+            $("#total").html("R$ " + total)
+            return total
+        }
+        
+        load_produtos()
+        load_vendas()
+
+        
+        
+    </script>
+    
+</body>
+</html>
