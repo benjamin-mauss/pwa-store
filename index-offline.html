@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+		<link rel="manifest" href="/app.webmanifest" />
+		<link rel="stylesheet" href="/css/index.css" />
+		<link rel="stylesheet" href="/css/mandatory.css" />
+		<script> // just in the main one
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.register('/sw.js')
+				  .then(function(registration) {
+					// Registration was successful
+					console.log('ServiceWorker registration successful with scope: ' + registration.scope);
+				  }).catch(function(err) {
+					// registration failed :(
+						console.log('ServiceWorker registration failed: ', err);
+				  });
+			}else{
+				console.log("Service Worker not supported");
+			}
+			  
+		</script>
+		<title>Offline index</title>
+
+	</head>
+	<body>
+		<div class="escolhas">
+			<div class="escolha">
+				<a href="/pages/vendas/index.html"> <img src="/imgs/handshake.png" alt="vender" />Vender </a>
+			</div>
+			<div class="escolha">
+				<a href="/pages/produtos/index.html"> <img src="/imgs/carrinho.png" alt="produtos" />Produtos </a>
+			</div>
+			<div class="escolha">
+				<a href="/pages/historico/index.html"> <img src="/imgs/grafico.png" alt="graficos" />Histórico </a>
+			</div>
+		</div>
+		Você está offline
+		<script src="/js/libraries/jquery.min.js"></script>
+		<script src="/js/mandatory.js"></script>
+		
+	</body>
+</html>
