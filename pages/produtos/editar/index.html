@@ -75,7 +75,7 @@
                 var request = objectStore.put(produto);
                 request.onsuccess = function(event) {
                     console.log("Produto editado com sucesso");
-                    window.location.href = "/pages/produtos/";
+                    window.location.href = "/pages/produtos/index.html";
                 };
 
                 transaction.oncomplete = function(event) {
@@ -84,14 +84,14 @@
             }
         }
         function voltar(){
-            window.location.href = "/pages/produtos";
+            window.location.href = "/pages/produtos/index.html";
         }
         
         function load_produto(){
             // get id from url
             var url_string = window.location.href;
             var url = new URL(url_string);
-            id = parseInt(url.searchParams.get("id"));
+            id = parseInt(url.hash.replaceAll("#",""));
 
             // open the database and get the product
             var request = window.indexedDB.open(main_db, version);

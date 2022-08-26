@@ -1,11 +1,11 @@
 // sw.js
 
-const staticCacheName = "cache_1"
+const staticCacheName = "cache_4"
 const filesToCache = [
     "/LICENSE",
     // "/app.webmanifest",
     "/index.html",
-    "/sw.js",
+    // "/sw.js",
     // "/imgs",
     "/imgs/arrow_down.png",
     "/imgs/handshake.png",
@@ -14,24 +14,19 @@ const filesToCache = [
     "/imgs/arrow_up.png",
     "/imgs/no-image2.png",
     "/imgs/no-image.png",
-    "/offline.html",
+    "/index-offline.html",
     // "/README.md",
     // "/icon",
     "/icon/512x512.png",
     // "/pages",
-    "/pages/vendas",
     "/pages/vendas/",
     "/pages/vendas/index.html",
-    "/pages/historico",
     "/pages/historico/",
     "/pages/historico/index.html",
-    "/pages/produtos",
     "/pages/produtos/",
     "/pages/produtos/index.html",
-    "/pages/produtos/novo",
     "/pages/produtos/novo/",
     "/pages/produtos/novo/index.html",
-    "/pages/produtos/editar",
     "/pages/produtos/editar/index.html",
     // "/css",
     "/css/novo.css",
@@ -53,14 +48,17 @@ const filesToCache = [
 
 this.addEventListener("fetch", event => {
     console.log("fetch")
+
+    cached_page = caches.match(event.request)
+    .then(response => {
+      return response || fetch(event.request);
+    })
+    .catch(() => {
+      return caches.match('/index-offline.html');
+    })
+
     event.respondWith(
-      caches.match(event.request)
-        .then(response => {
-          return response || fetch(event.request);
-        })
-        .catch(() => {
-          return caches.match('/offline.html');
-        })
+        cached_page
     )
   });
 
