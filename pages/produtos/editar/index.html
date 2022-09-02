@@ -56,6 +56,20 @@
                 imagem: document.getElementById("prev_img").src,
                 id: id
             }
+
+            if(!produto.nome || !produto.preco){
+                alert("Preencha todos os campos!");
+                return;
+            }
+
+            while(!produto.imagem){
+                // loop for make this thread wait until the image is loaded
+                // it's a bad practice, but it's the only way to do it
+                // because the image is loaded async
+                console.log("waiting for image to load");
+
+            }
+            
             
             // open the database
             var request = window.indexedDB.open(main_db, version);
