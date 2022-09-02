@@ -74,7 +74,7 @@
                 var request = objectStore.add(produto);
                 request.onsuccess = function(event) {
                     console.log("Produto cadastrado com sucesso!");
-                    location.href = "/pages/produtos";
+                    location.href = "/pages/produtos/index.html";
                 };
                 transaction.oncomplete = function(event) {
                     db.close();
