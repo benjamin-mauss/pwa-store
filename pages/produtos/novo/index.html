@@ -20,7 +20,7 @@
     <script src="/js/mandatory.js"></script>
     
     <script>
-        function getBase64(fprecoile) {
+        function getBase64(file) {
             return new Promise((resolve, reject) => {
               const reader = new FileReader();
               reader.readAsDataURL(file);
