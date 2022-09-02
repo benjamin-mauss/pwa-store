@@ -14,13 +14,13 @@
     <img src="/imgs/no-image.png" alt="" id="prev_img" class="clickable"> <br>
     <input type="text" id="nome" placeholder="Nome do produto" > <br> <br>
     <input type="number" id="preco" placeholder="Preço do produto"  > <br> <br>
-    <button onclick="cadastrar()">Cadastrar</button>
-    <button onclick="voltar()">Voltar</button>
+    <button id="btn_cadastrar" onclick="cadastrar()">Cadastrar</button>
+    <button id="btn_voltar" onclick="voltar()">Voltar</button>
     <script src="/js/libraries/jquery.min.js"></script>
     <script src="/js/mandatory.js"></script>
     
     <script>
-        function getBase64(file) {
+        function getBase64(fprecoile) {
             return new Promise((resolve, reject) => {
               const reader = new FileReader();
               reader.readAsDataURL(file);
@@ -55,7 +55,7 @@
                 preco: parseFloat(document.getElementById("preco").value),
                 imagem: document.getElementById("prev_img").src
             }
-
+            console.log(produto)
             
             // open the database
             var request = window.indexedDB.open(main_db, version);
